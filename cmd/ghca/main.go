@@ -129,12 +129,17 @@ func runAnalyze(cmd *cobra.Command, args []string) {
 	fmt.Println(green.Render("✓") + " Repository: " + repoName)
 	fmt.Println()
 
-	// Fetch commits with spinner
+	// Fetch commits with spinner and progress
 	spinner := tui.NewSpinner(os.Stdout, "Analyzing Git history...")
 	spinner.Start()
 	startTime := time.Now()
 
-	commits, err := fetcher.FetchCommits(since, until, workers)
+	// Progress callback to update spinner
+	progressCallback := func(processed, total int) {
+		spinner.UpdateProgress("Analyzing Git history...", processed, total)
+	}
+
+	commits, err := fetcher.FetchCommits(since, until, workers, progressCallback)
 
 	spinner.Stop()
 

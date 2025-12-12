@@ -3,6 +3,7 @@ package git
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/go-git/go-git/v5"
@@ -29,9 +30,12 @@ func NewFetcher(repoPath string) (*Fetcher, error) {
 	}, nil
 }
 
+// ProgressCallback is called during commit processing to report progress
+type ProgressCallback func(processed, total int)
+
 // FetchCommits fetches all commits with optional date filtering
 // Uses concurrency for faster processing
-func (f *Fetcher) FetchCommits(since, until *time.Time, workers int) ([]*types.CommitData, error) {
+func (f *Fetcher) FetchCommits(since, until *time.Time, workers int, progressCallback ProgressCallback) ([]*types.CommitData, error) {
 	// Get commit iterator
 	ref, err := f.repo.Head()
 	if err != nil {
@@ -65,11 +69,11 @@ func (f *Fetcher) FetchCommits(since, until *time.Time, workers int) ([]*types.C
 	}
 
 	// Process commits concurrently
-	return f.processCommitsConcurrent(allCommits, workers)
+	return f.processCommitsConcurrent(allCommits, workers, progressCallback)
 }
 
 // processCommitsConcurrent processes commits in parallel using goroutines
-func (f *Fetcher) processCommitsConcurrent(commits []*object.Commit, workers int) ([]*types.CommitData, error) {
+func (f *Fetcher) processCommitsConcurrent(commits []*object.Commit, workers int, progressCallback ProgressCallback) ([]*types.CommitData, error) {
 	if workers <= 0 {
 		workers = 4 // default
 	}
@@ -89,6 +93,8 @@ func (f *Fetcher) processCommitsConcurrent(commits []*object.Commit, workers int
 
 	// Start worker pool
 	var wg sync.WaitGroup
+	var processed atomic.Int32
+
 	for w := 0; w < workers; w++ {
 		wg.Add(1)
 		go func() {
@@ -99,6 +105,15 @@ func (f *Fetcher) processCommitsConcurrent(commits []*object.Commit, workers int
 					index: job.index,
 					data:  data,
 					err:   err,
+				}
+
+				// Report progress
+				if progressCallback != nil {
+					count := int(processed.Add(1))
+					// Report every 50 commits or on last commit
+					if count%50 == 0 || count == len(commits) {
+						progressCallback(count, len(commits))
+					}
 				}
 			}
 		}()

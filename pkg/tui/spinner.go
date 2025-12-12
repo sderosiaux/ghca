@@ -84,3 +84,11 @@ func (s *Spinner) UpdateMessage(message string) {
 	defer s.mu.Unlock()
 	s.message = message
 }
+
+// UpdateProgress updates the spinner with progress information
+func (s *Spinner) UpdateProgress(message string, current, total int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	percentage := float64(current) / float64(total) * 100
+	s.message = fmt.Sprintf("%s %d/%d (%.0f%%)", message, current, total, percentage)
+}
