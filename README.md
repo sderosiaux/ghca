@@ -4,6 +4,103 @@
 
 Analyze contributor patterns in any Git repository - track vendor influence, measure community health, and visualize contribution trends over time.
 
+## 📊 What It Looks Like
+
+### Standard Analysis
+
+```bash
+ghca analyze /path/to/kafka
+```
+
+```
+✓ Processed 16,755 commits in 50.5s (335 commits/sec)
+✓ Found 1,644 unique contributors
+
+╭───────────────────────────────────────────╮
+│  apache/kafka                              │
+│                                           │
+│  📊 Total Commits: 16,755                 │
+│  👥 Total Contributors: 1,644             │
+│  📅 Date Range: 2011-07-25 to 2024-12-11  │
+╰───────────────────────────────────────────╯
+
+Vendor/Community Breakdown
+
+Category        Commits   % Commits   Contributors   % Contributors   Lines Added    Lines Deleted
+────────────────────────────────────────────────────────────────────────────────────────────────────
+community        12,471       74.4%          1,501            91.3%    +2,175,518       -1,456,789
+confluent         3,890       23.2%            100             6.1%      +971,436         -623,142
+linkedin            164        1.0%             20             1.2%       +19,753          -12,456
+aws                 132        0.8%              7             0.4%       +13,712           -8,921
+ibm                  98        0.6%             16             1.0%       +11,234           -7,654
+
+Key Insights
+
+🏆 community leads with 74.4% of commits (12,471 commits)
+🌍 Community contributes 74.4% of commits with 1,501 contributors
+📏 Average commit size: 245 lines changed
+```
+
+### Timeline Analysis
+
+```bash
+ghca analyze /path/to/kafka --breakdown quarter --since 2024-01-01
+```
+
+```
+╭───────────────────────────────────────────╮
+│  apache/kafka                              │
+│                                           │
+│  Quarter-over-Quarter                     │
+│                                           │
+│  📊 Total Periods: 4                      │
+│  📅 Date Range: 2024-01-01 to 2024-12-31  │
+╰───────────────────────────────────────────╯
+
+Timeline Breakdown
+
+Period               Total     community  confluent   @apache.org        others
+─────────────────────────────────────────────────────────────────────────────
+2024-Q1                393      99 (25%)   90 (23%)      38 (10%)      166 (42%)
+2024-Q2                652     182 (28%)   75 (12%)      66 (10%)      329 (50%)
+2024-Q3                633     287 (45%)  107 (17%)      74 (12%)      165 (26%)
+2024-Q4                767     376 (49%)  130 (17%)     102 (13%)      159 (21%)
+
+
+Key Trends
+
+📈 Period Range: 2024-Q1 → 2024-Q4
+📊 Commits: 393 → 767 (+374)
+
+🌍 Community: 25.2% → 49.0% ↗
+   Contributors: 36 → 52
+```
+
+### Automatic Domain Classification
+
+**No config file needed!** Automatically groups contributors by email domain:
+
+```bash
+ghca analyze /path/to/kafka
+```
+
+```
+ℹ No vendor config - using automatic domain classification
+  Personal emails (gmail, yahoo, etc.) → 'community'
+  Corporate emails → '@domain' (e.g., '@confluent.io', '@amazon.com')
+
+Vendor/Community Breakdown
+
+Category              Commits   % Commits    Contributors
+──────────────────────────────────────────────────────────
+community                 944       38.6%             113
+@confluent.io             402       16.4%              24
+@apache.org               280       11.5%              11
+@aiven.io                 108        4.4%               8
+@apple.com                 29        1.2%               3
+others                    682       27.9%             125
+```
+
 ## 🚀 Quick Start
 
 ### Installation
@@ -17,61 +114,25 @@ go install github.com/sderosiaux/ghca/cmd/ghca@latest
 ### Basic Usage
 
 ```bash
-# Analyze a repository
+# Analyze any repository (automatic domain classification)
 ghca analyze /path/to/repo
 
-# Analyze with vendor classification
+# Analyze with custom vendor classification
 ghca analyze /path/to/repo --config vendors.yaml
 
-# Analyze Apache Kafka (full history in ~50 seconds)
-ghca analyze /tmp/kafka --config vendors.yaml --workers 16
+# Timeline analysis
+ghca analyze /path/to/repo --breakdown quarter --since 2024-01-01
+
+# Faster processing with more workers
+ghca analyze /path/to/repo --workers 16
 ```
 
 ## ⚡ Performance
 
-**40x faster than Python implementations**
-
 - 16,755 commits analyzed in **50 seconds** (Apache Kafka)
-- 335 commits/sec with 16 workers
+- ~335 commits/sec with 16 workers
 - Concurrent processing with goroutines
 - Single binary, zero dependencies
-
-## 📊 Example Output
-
-### Standard Analysis
-
-```
-✓ Processed 16,755 commits in 50.5s (335 commits/sec)
-✓ Found 1,644 unique contributors
-
-Vendor/Community Breakdown
-────────────────────────────────────────────────────────────────────────
-Category        Commits   % Commits   Contributors   Lines Added
-community        12,471       74.4%          1,501    +2,175,518
-confluent         3,890       23.2%            100      +971,436
-linkedin            164        1.0%             20       +19,753
-aws                 132        0.8%              7       +13,712
-
-🏆 community leads with 74.4% of commits
-🌍 Community contributes 74.4% with 1,501 contributors
-```
-
-### Timeline Analysis
-
-```bash
-ghca analyze /repo --config vendors.yaml --breakdown year
-```
-
-```
-Period               Total     community           aws     confluent
-─────────────────────────────────────────────────────────────────────
-2011                   116    116 (100%)             -             -
-2015                   761     570 (75%)             -     122 (16%)
-2020                 1,405     831 (59%)             -     566 (40%)
-2025                 2,138   1,576 (74%)        5 (0%)     557 (26%)
-
-📈 Community: 100.0% → 73.7% ↘
-```
 
 ## 🎯 Configuration
 
@@ -97,10 +158,13 @@ vendors:
     github_companies:
       - Amazon
       - Amazon Web Services
-    usernames: []
 ```
 
 **Classification priority:** username > email domain > GitHub company > community (default)
+
+**No config needed:** Without a config file, contributors are automatically classified by email domain:
+- Personal email providers (gmail, yahoo, outlook, etc.) → `community`
+- Corporate domains → `@domain` format (e.g., `@confluent.io`, `@apple.com`)
 
 See [vendors.example.yaml](vendors.example.yaml) for a complete example.
 
@@ -110,16 +174,16 @@ Track how vendor contributions evolve over time:
 
 ```bash
 # Year-over-year trends
-ghca analyze /repo --config vendors.yaml --breakdown year
+ghca analyze /repo --breakdown year
 
 # Quarterly breakdown (since 2023)
-ghca analyze /repo --config vendors.yaml --breakdown quarter --since 2023-01-01
+ghca analyze /repo --breakdown quarter --since 2023-01-01
 
 # Monthly activity (last 12 months)
-ghca analyze /repo --config vendors.yaml --breakdown month --since 2024-01-01
+ghca analyze /repo --breakdown month --since 2024-01-01
 
 # Weekly changes (recent activity)
-ghca analyze /repo --config vendors.yaml --breakdown week --since 2024-11-01
+ghca analyze /repo --breakdown week --since 2024-11-01
 ```
 
 ## 💡 Use Cases
@@ -142,7 +206,7 @@ ghca analyze /repo --since 2024-04-01  # After
 ### Trend Analysis
 Identify community growth or decline:
 ```bash
-ghca analyze /repo --config vendors.yaml --breakdown year
+ghca analyze /repo --breakdown year
 # Track vendor contributions evolution
 # Monitor community engagement trends
 ```
@@ -150,7 +214,7 @@ ghca analyze /repo --config vendors.yaml --breakdown year
 ### Due Diligence
 Evaluate vendor lock-in before adopting a technology:
 ```bash
-ghca analyze /repo --config vendors.yaml
+ghca analyze /repo
 # Red flag: single vendor > 80%
 # Green flag: diverse contributor base
 ```
@@ -161,7 +225,7 @@ ghca analyze /repo --config vendors.yaml
 ghca analyze [repo-path] [flags]
 
 Flags:
-  -c, --config string      Vendor configuration YAML file
+  -c, --config string      Vendor configuration YAML file (optional)
   -b, --breakdown string   Time breakdown: year, quarter, month, week
       --since string       Analyze commits since date (YYYY-MM-DD)
       --until string       Analyze commits until date (YYYY-MM-DD)
@@ -172,23 +236,26 @@ Flags:
 ### Examples
 
 ```bash
+# Analyze with automatic domain classification
+ghca analyze /tmp/kafka
+
 # Analyze with 16 workers for maximum speed
 ghca analyze /tmp/kafka --workers 16
 
 # Analyze specific time period
 ghca analyze /repo --since 2024-01-01 --until 2024-12-31
 
-# Year-over-year breakdown
+# Year-over-year breakdown with vendor config
 ghca analyze /repo --config vendors.yaml --breakdown year
 
 # Recent quarterly trends
-ghca analyze /repo --config vendors.yaml --breakdown quarter --since 2023-01-01
+ghca analyze /repo --breakdown quarter --since 2023-01-01
 ```
 
 ## 🏗️ How It Works
 
 1. **Clone or use local repository** - Works with any Git repository
-2. **Configure vendors** (optional) - Define vendor identification rules in YAML
+2. **Configure vendors** (optional) - Define vendor identification rules in YAML, or use automatic domain classification
 3. **Concurrent analysis** - Processes commits in parallel using goroutines
 4. **Classification** - Identifies vendors by username, email domain, or GitHub company
 5. **Metrics computation** - Calculates commits, lines changed, and contributor counts
@@ -234,7 +301,7 @@ A: Processes ~335 commits/second on typical hardware with 16 workers. Apache Kaf
 A: Yes, as long as you have local access to the Git repository.
 
 **Q: What if I don't provide a vendor config?**
-A: All contributors will be classified as "community" - still useful for basic statistics.
+A: Contributors are automatically classified by email domain - personal emails become "community", corporate domains shown as "@domain".
 
 **Q: Does it modify my repository?**
 A: No, ghca is read-only. It never modifies your Git repository.
