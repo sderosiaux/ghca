@@ -130,6 +130,15 @@ func (d *Display) renderSummaryTable() string {
 
 	// Show all vendors sorted by commits (hide vendors with 0 commits)
 	vendors := analyzer.GetSortedVendors(d.analysis, "commits", true)
+
+	// Check if we're in auto-classify mode (domains start with @)
+	isAutoClassify := d.isAutoClassifyMode(vendors)
+
+	// If auto-classify mode, limit to top 5 domains (plus community)
+	if isAutoClassify {
+		vendors = d.limitToTopDomains(vendors, 5)
+	}
+
 	groups := make([]*analyzer.VendorGroup, 0, len(vendors))
 	for _, vendor := range vendors {
 		metrics := d.analysis.VendorMetrics[vendor]
@@ -203,6 +212,14 @@ func (d *Display) renderBarChart(metric string) string {
 
 	vendors := analyzer.GetSortedVendors(d.analysis, metric, true)
 
+	// Check if we're in auto-classify mode (domains start with @)
+	isAutoClassify := d.isAutoClassifyMode(vendors)
+
+	// If auto-classify mode, limit to top 5 domains (plus community)
+	if isAutoClassify {
+		vendors = d.limitToTopDomains(vendors, 5)
+	}
+
 	// Get values and max
 	values := make([]int, len(vendors))
 	maxValue := 0
@@ -260,6 +277,14 @@ func (d *Display) renderInsights() string {
 
 	// Top contributor by commits
 	vendors := analyzer.GetSortedVendors(d.analysis, "commits", true)
+
+	// Check if we're in auto-classify mode (domains start with @)
+	isAutoClassify := d.isAutoClassifyMode(vendors)
+
+	// If auto-classify mode, limit to top 5 domains (plus community)
+	if isAutoClassify {
+		vendors = d.limitToTopDomains(vendors, 5)
+	}
 	if len(vendors) > 0 {
 		topVendor := vendors[0]
 		topMetrics := d.analysis.VendorMetrics[topVendor]
@@ -297,6 +322,44 @@ func (d *Display) renderInsights() string {
 	))
 
 	return out.String()
+}
+
+// isAutoClassifyMode checks if we're in auto-classify mode (no vendor file)
+// by checking if any vendor names start with "@" (which indicates email domains)
+func (d *Display) isAutoClassifyMode(vendors []string) bool {
+	for _, vendor := range vendors {
+		if strings.HasPrefix(vendor, "@") {
+			return true
+		}
+	}
+	return false
+}
+
+// limitToTopDomains limits vendors to top N domains plus community
+func (d *Display) limitToTopDomains(vendors []string, limit int) []string {
+	result := make([]string, 0, limit+1)
+	domainCount := 0
+
+	for _, vendor := range vendors {
+		// Always include community
+		if vendor == "community" {
+			result = append(result, vendor)
+			continue
+		}
+
+		// Include domains (prefixed with @) up to the limit
+		if strings.HasPrefix(vendor, "@") {
+			if domainCount < limit {
+				result = append(result, vendor)
+				domainCount++
+			}
+		} else {
+			// Include non-domain vendors (shouldn't happen in auto-classify mode)
+			result = append(result, vendor)
+		}
+	}
+
+	return result
 }
 
 // GetMonthsSorted returns sorted list of months from timeline

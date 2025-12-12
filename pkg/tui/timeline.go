@@ -107,6 +107,11 @@ func (d *TimelineDisplay) renderTimelineTable() string {
 	// Show all vendors (sorted by total commits)
 	vendors := d.getVendorsToDisplay(vendorSet)
 
+	// Check if we're in auto-classify mode and limit to top 5 domains
+	if d.isAutoClassifyMode(vendors) {
+		vendors = d.limitToTopDomains(vendors, 5)
+	}
+
 	// Header
 	out.WriteString(fmt.Sprintf("%-15s %10s", "Period", "Total"))
 	for _, vendor := range vendors {
@@ -188,6 +193,43 @@ func (d *TimelineDisplay) getVendorsToDisplay(vendorSet map[string]bool) []strin
 	return vendors
 }
 
+// isAutoClassifyMode checks if we're in auto-classify mode (no vendor file)
+// by checking if any vendor names start with "@" (which indicates email domains)
+func (d *TimelineDisplay) isAutoClassifyMode(vendors []string) bool {
+	for _, vendor := range vendors {
+		if strings.HasPrefix(vendor, "@") {
+			return true
+		}
+	}
+	return false
+}
+
+// limitToTopDomains limits vendors to top N domains plus community
+func (d *TimelineDisplay) limitToTopDomains(vendors []string, limit int) []string {
+	result := make([]string, 0, limit+1)
+	domainCount := 0
+
+	for _, vendor := range vendors {
+		// Always include community
+		if vendor == "community" {
+			result = append(result, vendor)
+			continue
+		}
+
+		// Include domains (prefixed with @) up to the limit
+		if strings.HasPrefix(vendor, "@") {
+			if domainCount < limit {
+				result = append(result, vendor)
+				domainCount++
+			}
+		} else {
+			// Include non-domain vendors (shouldn't happen in auto-classify mode)
+			result = append(result, vendor)
+		}
+	}
+
+	return result
+}
 
 // renderTrendSummary shows key trends
 func (d *TimelineDisplay) renderTrendSummary() string {
