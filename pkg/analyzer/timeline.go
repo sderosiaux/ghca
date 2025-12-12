@@ -5,8 +5,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/sderosiaux/ghca/pkg/config"
-	"github.com/sderosiaux/ghca/pkg/types"
+	"github.com/sderosiaux/git-contributor-insights/pkg/config"
+	"github.com/sderosiaux/git-contributor-insights/pkg/types"
 )
 
 // TimeBreakdown represents metrics for a specific time period

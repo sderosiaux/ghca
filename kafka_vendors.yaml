@@ -1,0 +1,115 @@
+# Kafka Vendor Configuration
+# Classifies contributors to Apache Kafka by their company affiliation
+# Data streaming and event-driven ecosystem vendors
+
+vendors:
+  confluent:
+    domains:
+      - confluent.io
+      - ewencp.org        # Ewen Cheslack-Postava (co-founder)
+    github_companies:
+      - Confluent
+      - Confluent, Inc.
+    usernames:
+      - jkreps           # Jay Kreps (co-founder)
+      - gwenshap         # Gwen Shapira
+      - junrao           # Jun Rao (co-founder)
+      - neha             # Neha Narkhede (co-founder)
+      - ewencp           # Ewen Cheslack-Postava
+      - ijuma            # Ismael Juma
+
+  linkedin:
+    domains:
+      - linkedin.com
+      - linkedin.biz
+    github_companies:
+      - LinkedIn
+      - LinkedIn Corporation
+    usernames: []
+
+  aiven:
+    domains:
+      - aiven.io
+    github_companies:
+      - Aiven
+      - Aiven Ltd
+    usernames: []
+
+  aws:
+    domains:
+      - amazon.com
+      - aws.amazon.com
+    github_companies:
+      - Amazon
+      - Amazon Web Services
+      - AWS
+    usernames: []
+
+  ibm:
+    domains:
+      - ibm.com
+      - us.ibm.com
+      - uk.ibm.com
+    github_companies:
+      - IBM
+      - International Business Machines
+    usernames: []
+
+  uber:
+    domains:
+      - uber.com
+    github_companies:
+      - Uber
+      - Uber Technologies
+    usernames: []
+
+  apple:
+    domains:
+      - apple.com
+    github_companies:
+      - Apple
+      - Apple Inc.
+    usernames: []
+
+  cloudera:
+    domains:
+      - cloudera.com
+      - hortonworks.com    # Merged with Cloudera in 2019
+    github_companies:
+      - Cloudera
+      - Cloudera, Inc.
+      - Hortonworks
+    usernames: []
+
+  redhat:
+    domains:
+      - redhat.com
+    github_companies:
+      - Red Hat
+      - RedHat
+      - Red Hat, Inc.
+    usernames: []
+
+  responsive:
+    domains:
+      - responsive.dev
+    github_companies:
+      - Responsive
+      - Responsive Computing
+    usernames: []
+
+  michelin:
+    domains:
+      - michelin.com
+    github_companies:
+      - Michelin
+    usernames: []
+
+  transferwise:
+    domains:
+      - transferwise.com
+      - wise.com           # Rebranded to Wise
+    github_companies:
+      - TransferWise
+      - Wise
+    usernames: []

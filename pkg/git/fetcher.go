@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/sderosiaux/ghca/pkg/types"
+	"github.com/sderosiaux/git-contributor-insights/pkg/types"
 )
 
 // Fetcher handles Git repository operations

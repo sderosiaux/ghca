@@ -1,4 +1,4 @@
-module github.com/sderosiaux/ghca
+module github.com/sderosiaux/git-contributor-insights
 
 go 1.25.3
 

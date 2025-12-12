@@ -1,4 +1,4 @@
-# ghca - GitHub Contributor Analyzer
+# Git Contributor Insights
 
 ⚡ High-performance Git repository analyzer to identify vendor vs community contributions
 
@@ -105,10 +105,10 @@ others                    682       27.9%             125
 
 ### Installation
 
-Download the latest release for your platform from [Releases](https://github.com/sderosiaux/ghca/releases), or build from source:
+Download the latest release for your platform from [Releases](https://github.com/sderosiaux/git-contributor-insights/releases), or build from source:
 
 ```bash
-go install github.com/sderosiaux/ghca/cmd/ghca@latest
+go install github.com/sderosiaux/git-contributor-insights/cmd/ghca@latest
 ```
 
 ### Basic Usage
@@ -166,7 +166,7 @@ vendors:
 - Personal email providers (gmail, yahoo, outlook, etc.) → `community`
 - Corporate domains → `@domain` format (e.g., `@confluent.io`, `@apple.com`)
 
-See [vendors.example.yaml](vendors.example.yaml) for a complete example.
+See [kafka_vendors.yaml](kafka_vendors.yaml) for a complete Apache Kafka example with data streaming companies.
 
 ## 📈 Timeline Analysis
 
@@ -263,7 +263,7 @@ ghca analyze /repo --breakdown quarter --since 2023-01-01
 
 ## 📦 Distribution
 
-Download pre-built binaries from [Releases](https://github.com/sderosiaux/ghca/releases) for:
+Download pre-built binaries from [Releases](https://github.com/sderosiaux/git-contributor-insights/releases) for:
 - Linux (amd64, arm64)
 - macOS (Intel, Apple Silicon)
 - Windows (amd64)
@@ -304,7 +304,7 @@ A: Yes, as long as you have local access to the Git repository.
 A: Contributors are automatically classified by email domain - personal emails become "community", corporate domains shown as "@domain".
 
 **Q: Does it modify my repository?**
-A: No, ghca is read-only. It never modifies your Git repository.
+A: No, the tool is read-only. It never modifies your Git repository.
 
 ## 📄 License
 

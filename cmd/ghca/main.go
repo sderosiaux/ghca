@@ -8,10 +8,10 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 
-	"github.com/sderosiaux/ghca/pkg/analyzer"
-	"github.com/sderosiaux/ghca/pkg/config"
-	"github.com/sderosiaux/ghca/pkg/git"
-	"github.com/sderosiaux/ghca/pkg/tui"
+	"github.com/sderosiaux/git-contributor-insights/pkg/analyzer"
+	"github.com/sderosiaux/git-contributor-insights/pkg/config"
+	"github.com/sderosiaux/git-contributor-insights/pkg/git"
+	"github.com/sderosiaux/git-contributor-insights/pkg/tui"
 )
 
 var (
@@ -214,7 +214,7 @@ func runAnalyze(cmd *cobra.Command, args []string) {
 	}
 
 	fmt.Println()
-	fmt.Println(dim.Render("Powered by ghca (Go) - https://github.com/sderosiaux/ghca"))
+	fmt.Println(dim.Render("Powered by Git Contributor Insights - https://github.com/sderosiaux/git-contributor-insights"))
 }
 
 func joinStrings(strs []string, sep string) string {

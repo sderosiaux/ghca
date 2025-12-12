@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/sderosiaux/ghca/pkg/analyzer"
+	"github.com/sderosiaux/git-contributor-insights/pkg/analyzer"
 )
 
 // TimelineDisplay renders timeline analysis

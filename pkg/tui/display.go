@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/sderosiaux/ghca/pkg/analyzer"
-	"github.com/sderosiaux/ghca/pkg/types"
+	"github.com/sderosiaux/git-contributor-insights/pkg/analyzer"
+	"github.com/sderosiaux/git-contributor-insights/pkg/types"
 )
 
 var (

@@ -3,7 +3,7 @@ package analyzer
 import (
 	"sort"
 
-	"github.com/sderosiaux/ghca/pkg/types"
+	"github.com/sderosiaux/git-contributor-insights/pkg/types"
 )
 
 // VendorGroup represents grouped vendor data

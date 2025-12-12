@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/sderosiaux/ghca/pkg/config"
-	"github.com/sderosiaux/ghca/pkg/types"
+	"github.com/sderosiaux/git-contributor-insights/pkg/config"
+	"github.com/sderosiaux/git-contributor-insights/pkg/types"
 )
 
 // Analyzer analyzes commit and contributor data
